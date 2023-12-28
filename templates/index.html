@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gubbi Gaem</title>
+</head>
+<body>
+    <h1>Gubbi Gaem</h1><br>
+    <h2>Join a game:</h2>
+    <div>
+        <input type="number" id="code" placeholder="Game ID"><br><br>
+        <button onclick="joingame()">Join Game</button>
+    </div>
+    <br><br>
+    <h2>Start a new game:</h2>
+    <div>
+        <button onclick="newgame()">New Game</button>
+    </div>
+</body>
+</html>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
+
+    html,body{
+        background: linear-gradient(90deg, rgba(6,116,117,1) 0%, rgba(121,45,253,1) 100%) !important;
+    }
+    h1{
+        margin:50px;
+        font-family: sans-serif;
+        color:rgb(255, 150, 51);
+        text-align: center;
+        font-size:10vw;
+        font-family: 'Roboto', sans-serif;
+    }
+    h2{
+        font-family: sans-serif;
+        color:white;
+        text-align: center;
+    }
+    div{
+        text-align: center;
+    }
+</style>
+<script>
+function newgame(){
+    window.open("/newgame");
+}
+
+    function joingame(){
+        var code = document.getElementById("code").value;
+        var usr = document.getElementById("username").value;
+        if(code != null && code != ""){
+            if(usr != null && usr != ""){
+                location.href = "/game?gameId="+code+"&usr="+usr;
+            }
+            else{
+                alert("Invalid Username!");
+            }
+        }
+        else{
+            alert("Invalid Game ID!");
+        }
+    }
+</script>
