@@ -6,17 +6,10 @@
     <title>Gubbi Gaem</title>
 </head>
 <body>
-    <h1>Gubbi Gaem</h1><br>
-    <h2>Join a game:</h2>
+    <h1>An error occurred.</h1><br>
+    <h2>{{ error }}</h2>
     <div>
-        <input type="number" id="code" placeholder="Game ID" min="1111" max="9999"><br><br>
-        <button onclick="joingame()">Join Game</button>
-    </div>
-    <br><br>
-    <h2>Start a new game:</h2>
-    <div>
-        <input type="text" id="answer" placeholder="Correct Answer"><br><br>
-        <button onclick="newgame()">New Game</button>
+        <button onclick="window.location.href='/'">Back</button>
     </div>
 </body>
 </html>
@@ -83,24 +76,3 @@
         cursor: pointer;
     }
 </style>
-<script>
-function newgame(){
-    var answer = document.getElementById("answer").value;
-    if(answer != null && answer != ""){
-        location.href = "/newgame/"+answer;
-    }
-    else{
-        alert("Invalid Answer!");
-    }
-}
-
-    function joingame(){
-        var code = document.getElementById("code").value;
-        if(code != null && code != ""){
-            location.href = "/joingame/"+code;
-        }
-        else{
-            alert("Invalid Game ID!");
-        }
-    }
-</script>

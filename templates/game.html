@@ -7,35 +7,42 @@
     </head>
     <body>
         <h1>Gubbi Gaem</h1><br>
-        <h2>Guess a letter:</h2>
+        {% if playerNumber == 1 or playerNumber == 2 %}
         <div id="box-container">
-            <div class="letter-box"></div>
-            <div class="letter-box"></div>
-            <div class="letter-box"></div>
-            <div class="letter-box"></div>
-            <div class="spacer"></div>
-            <div class="letter-box"></div>
-            <div class="letter-box"></div>
-            <div class="letter-box"></div>
-            <div class="letter-box"></div>
-            <div class="letter-box"></div>
-            <div class="letter-box"></div>
-            <div class="letter-box"></div>
-            <div class="letter-box"></div>
-            <div class="letter-box"></div>
         </div>
         <h2>Enter your letter guess:</h2>
         <input type="text" id="guess" placeholder="Letter" maxlength="1"><br><br>
         <button>Guess</button>
-        {% if playerNumber == 1 %}
+        {% endif %}
+        {% if playerNumber == 0 %}
         <div id="admin-panel">
-            <h2>Admin Panel:</h2>
-            <button>Kick</button>
-            <button>Ban</button>
-            <button>Start Game</button>
-        </div>
+            <h1>Game ID: {{ gameID }}</h1>
         {% endif %}
     </body>
+    <script>
+        function addLetter(){
+            document.getElementById("box-container").innerHTML += '<div class="letter-box"></div>';
+        }
+
+        function addSpace(){
+            document.getElementById("box-container").innerHTML += '<div class="spacer"></div>';
+        }
+
+        function renderLetters(){
+            var currentLetters = "{{ currentLetters }}";
+            var lettersList = Array.from(currentLetters); // Create a list with each character of currentLetters
+            for (i = 0; i < lettersList.length; i++){
+                if(lettersList[i] == " "){
+                    setTimeout(addSpace, 150 * i);
+                }
+                else{
+                    setTimeout(addLetter, 150 * i);
+                }
+            }
+        }
+        
+        setTimeout(renderLetters, 1000);
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
 

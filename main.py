@@ -3,15 +3,7 @@ import random
 
 app = Flask(__name__)
 
-SAMPLE_GAME = {
-    "gameID":1234,
-    "playersJoined":0,
-    "answer":"DEEZ NUTS",
-    "guessedLetters":[],
-    "currentPlayerTurn":0
-}
-
-GAMES_LIST = [SAMPLE_GAME]
+GAMES_LIST = []
 
 def createGame(answer):
     global GAMES_LIST
@@ -29,7 +21,7 @@ def createGame(answer):
     return gameID
 
 def renderCurrentLetters(answer, guessedLetters):
-    return "".join([letter if letter in guessedLetters else "?" for letter in answer])
+    return "".join([letter if letter in guessedLetters or letter == " " else "?" for letter in answer])
 
 @app.route('/')
 def hello():
@@ -44,19 +36,23 @@ def joingame(gameID):
     game = next((game for game in GAMES_LIST if game["gameID"] == gameID), None)
     if game:
         playersJoined = game["playersJoined"]
+    else:
+        return render_template("error.html",error="Game not found")
     
     if playersJoined == 0:
-        playerNumber = 1
+        playerNumber = 0
     elif playersJoined == 1:
+        playerNumber = 1
+    elif playersJoined == 2:
         playerNumber = 2
     else:
-        return redirect("/")
-    
+        return render_template("error.html",error="Game is full")
+    game["playersJoined"] += 1
     return redirect("/game/"+str(gameID)+"?playerNumber="+str(playerNumber))
 
-@app.route('/creategame')
-def creategame():
-    return redirect("/game/"+str(createGame("DEEZ NUTS")))
+@app.route('/newgame/<string:answer>')
+def creategame(answer):
+    return redirect("/game/"+str(createGame(answer)))
 
 @app.route('/game/<int:gameID>')
 def game(gameID):
@@ -65,7 +61,18 @@ def game(gameID):
     game = next((game for game in GAMES_LIST if game["gameID"] == gameID), None)
     if game:
         currentLetters = renderCurrentLetters(game["answer"], game["guessedLetters"])
-    return render_template('game.html', gameID=gameID, currentLetters=currentLetters, guessedLetters=[], playerNumber=0, currentPlayerTurn=0)
+        playersJoined = game["playersJoined"]
+        if playersJoined == 0:
+            playerNumber = 0
+        elif playersJoined == 1:
+            playerNumber = 1
+        elif playersJoined == 2:
+            playerNumber = 2
+        else:
+            return render_template("error.html",error="Game is full")
+        return render_template('game.html', gameID=gameID, currentLetters=currentLetters, guessedLetters=[], playerNumber=playerNumber, currentPlayerTurn=0)
+    else:
+        return render_template("error.html",error="Game not found")
 
 @app.route('/submitguess/<int:gameID>/<int:playerNumber>/<string:guess>')
 def submitguess(gameID, playerNumber, guess):
@@ -73,8 +80,10 @@ def submitguess(gameID, playerNumber, guess):
     
     game = next((game for game in GAMES_LIST if game["gameID"] == gameID), None)
     if game and game["currentPlayerTurn"] == playerNumber:
-        guess = guess.upper()  # Convert guess to uppercase
+        guess = guess.upper()
         game["guessedLetters"].append(guess)
+        game["currentPlayerTurn"] = 1 if game["currentPlayerTurn"] == 0 else 0
+        
     return redirect("/game/"+str(gameID))
 
 if __name__ == '__main__':
