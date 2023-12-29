@@ -6,6 +6,130 @@
         <title>Gubbi Game</title>
     </head>
     <body>
-        
+        <h1>Gubbi Gaem</h1><br>
+        <h2>Guess a letter:</h2>
+        <div id="box-container">
+            <div class="letter-box"></div>
+            <div class="letter-box"></div>
+            <div class="letter-box"></div>
+            <div class="letter-box"></div>
+            <div class="spacer"></div>
+            <div class="letter-box"></div>
+            <div class="letter-box"></div>
+            <div class="letter-box"></div>
+            <div class="letter-box"></div>
+            <div class="letter-box"></div>
+            <div class="letter-box"></div>
+            <div class="letter-box"></div>
+            <div class="letter-box"></div>
+            <div class="letter-box"></div>
+        </div>
+        <h2>Enter your letter guess:</h2>
+        <input type="text" id="guess" placeholder="Letter" maxlength="1"><br><br>
+        <button>Guess</button>
+        {% if playerNumber == 1 %}
+        <div id="admin-panel">
+            <h2>Admin Panel:</h2>
+            <button>Kick</button>
+            <button>Ban</button>
+            <button>Start Game</button>
+        </div>
+        {% endif %}
     </body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
+
+        @keyframes slide-in {
+            0% {
+                transform: translateY(20%);
+                opacity: 0;
+                overflow: hidden;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+                overflow: hidden;
+            }
+        }
+
+        html{
+            background: linear-gradient(90deg, rgba(6,116,117,1) 0%, rgba(121,45,253,1) 100%) !important;
+        }
+        body{
+            animation: slide-in 1s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h1{
+            margin:50px;
+            font-family: sans-serif;
+            color:rgb(255, 150, 51);
+            text-align: center;
+            font-size:10vw;
+            font-family: 'Roboto', sans-serif;
+        }
+        h2{
+            font-family: sans-serif;
+            color:white;
+            text-align: center;
+        }
+        div{
+            text-align: center;
+        }
+        input{
+            border-radius: 5px;
+            border: none;
+            padding: 10px;
+            font-size: 20px;
+            transition: 1s all cubic-bezier(0.075, 0.82, 0.165, 1);
+        }
+        input:focus{
+            background-color: gray;
+            color: white;
+        }
+        button{
+            border-radius: 5px;
+            border: none;
+            padding: 10px;
+            font-size: 20px;
+            background-color: rgb(255, 150, 51);
+            color: white;
+            cursor: pointer;
+            margin: 5px;
+        }
+        #box-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 100%;
+        }
+        .letter-box {
+            min-width: 5vw;
+            min-height: 6vw;
+            max-width: 50px;
+            max-height: 70px;
+            background-color: cyan;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
+            border-radius: 5px;
+            margin: 10px;
+            transition: 0.5s all cubic-bezier(0.075, 0.82, 0.165, 1);
+        }
+        .letter-box:hover {
+            background-color: rgb(255, 150, 51);
+            scale: 1.1;
+        }
+        .letter-box:active {
+            background-color: rgb(124, 73, 25);
+            scale: .9;
+        }
+        .spacer {
+            min-width: 5vw;
+            min-height: 6vw;
+            max-width: 50px;
+            max-height: 70px;
+            margin: 10px;
+        }
+    </style>
 </html>
