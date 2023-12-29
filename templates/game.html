@@ -33,10 +33,10 @@
             var lettersList = Array.from(currentLetters); // Create a list with each character of currentLetters
             for (i = 0; i < lettersList.length; i++){
                 if(lettersList[i] == " "){
-                    setTimeout(addSpace, 150 * i);
+                    setTimeout(addSpace, 0 * i);
                 }
                 else{
-                    setTimeout(addLetter, 150 * i);
+                    setTimeout(addLetter, 0 * i);
                 }
             }
         }
@@ -47,6 +47,22 @@
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
 
         @keyframes slide-in {
+            0% {
+                transform: translateY(0px);
+                opacity: 0;
+                overflow: hidden;
+                scale: 0.9;
+                transform-origin: 50% 150%;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+                overflow: hidden;
+                scale: 1;
+                transform-origin: 50% 50%;
+            }
+        }
+        @keyframes bounce-in {
             0% {
                 transform: translateY(0px);
                 opacity: 0;
@@ -126,6 +142,7 @@
             border-radius: 5px;
             margin: 10px;
             transition: 0.5s all cubic-bezier(0.075, 0.82, 0.165, 1);
+            animation: bounce-in 1s ease-in-out;
         }
         .letter-box:hover {
             background-color: rgb(255, 150, 51);
@@ -141,6 +158,7 @@
             max-width: 50px;
             max-height: 70px;
             margin: 10px;
+            animation: bounce-in 1s ease-in-out;
         }
     </style>
 </html>
