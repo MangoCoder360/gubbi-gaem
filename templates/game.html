@@ -8,17 +8,29 @@
     <body>
         <h1>Gubbi Gaem</h1><br>
         {% if playerNumber == 1 or playerNumber == 2 %}
+        <div class="points-container">
+            <h3>P1: {{ player1Points }}</h3>
+        </div>
+        <div class="points-container" style="left: auto !important; right: 30px">
+            <h3>P2: {{ player2Points }}</h3>
+        </div>
         <div id="box-container">
         </div>
         {% if playerNumber == 1 and currentPlayerTurn == 0 %}
         <h2>Enter your guess:</h2>
         <input onkeydown="if(event.keyCode===13 && this.value.trim() !== '') submitGuess()" type="text" id="guess" placeholder="Letter" maxlength="1"><br><br>
         <button id="submitBtn" onclick="submitGuess()">Guess</button>
+        <h2>Or solve:</h2>
+        <input type="text" id="solve" placeholder="Solve"><br><br>
+        <button id="submitBtn" onclick="">Solve</button>
         {% endif %}
         {% if playerNumber == 2 and currentPlayerTurn == 1 %}
         <h2>Enter your guess:</h2>
         <input onkeydown="if(event.keyCode===13 && this.value.trim() !== '') submitGuess()" type="text" id="guess" placeholder="Letter" maxlength="1"><br><br>
         <button id="submitBtn" onclick="submitGuess()">Guess</button>
+        <h2>Or solve:</h2>
+        <input type="text" id="solve" placeholder="Solve"><br><br>
+        <button id="submitBtn" onclick="">Solve</button>
         {% endif %}
         {% endif %}
         {% if playerNumber == 0 %}
@@ -27,6 +39,15 @@
         {% endif %}
     </body>
     <script>
+        try{
+            document.getElementById("guess").focus();
+        }
+        catch(err){
+            console.log("Not your turn");
+        }
+        setTimeout(() => {
+            document.body.scrollTo(0, 0);
+        }, 1000);
         function checkIfPlayersTurn(){
             if("{{ playerNumber }}" == "1" && "{{ currentPlayerTurn}}" == "1"){
                     fetch('/getcurrentplayersturn/{{ gameID }}').then(function(response){
@@ -90,7 +111,7 @@
             }
         }
         
-        setTimeout(renderLetters, 500);
+        setTimeout(renderLetters, 1000);
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
@@ -113,18 +134,10 @@
         }
         @keyframes bounce-in {
             0% {
-                transform: translateY(0px);
-                opacity: 0;
-                overflow: hidden;
-                scale: 0.9;
-                transform-origin: 50% 150%;
+                scale: 0;
             }
             100% {
-                transform: translateY(0);
-                opacity: 1;
-                overflow: hidden;
                 scale: 1;
-                transform-origin: 50% 50%;
             }
         }
 
@@ -137,6 +150,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            margin: 0px;
         }
         h1{
             margin:50px;
@@ -194,11 +208,12 @@
             border-radius: 5px;
             margin: 10px;
             transition: 0.5s all cubic-bezier(0.075, 0.82, 0.165, 1);
-            animation: bounce-in 1s ease-in-out;
+            animation: bounce-in 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: xxx-large;
+            user-select: none;
         }
         .letter-box:hover {
             background-color: rgb(255, 150, 51);
@@ -215,6 +230,18 @@
             max-height: 70px;
             margin: 10px;
             animation: bounce-in 1s ease-in-out;
+        }
+        .points-container {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: sans-serif;
+            color: white;
+            font-size: 3vw;
         }
     </style>
 </html>
