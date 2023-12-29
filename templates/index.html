@@ -89,14 +89,8 @@ function newgame(){
 
     function joingame(){
         var code = document.getElementById("code").value;
-        var usr = document.getElementById("username").value;
         if(code != null && code != ""){
-            if(usr != null && usr != ""){
-                location.href = "/game?gameId="+code+"&usr="+usr;
-            }
-            else{
-                alert("Invalid Username!");
-            }
+            location.href = "/game/";
         }
         else{
             alert("Invalid Game ID!");
