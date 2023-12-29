@@ -16,7 +16,9 @@ def createGame(answer):
         "playersJoined":0,
         "answer":answer,
         "guessedLetters":[],
-        "currentPlayerTurn":0
+        "currentPlayerTurn":0,
+        "p1Points":0,
+        "p2Points":0
     }
     GAMES_LIST.append(game)
     return gameID
@@ -64,6 +66,8 @@ def game(gameID):
         currentLetters = renderCurrentLetters(game["answer"], game["guessedLetters"])
         playersJoined = game["playersJoined"]
         currentPlayerTurn = game["currentPlayerTurn"]
+        p1Points = game["p1Points"]
+        p2Points = game["p2Points"]
         if request.args.get('playerNumber'):
             if int(request.args.get('playerNumber')) == 0:
                 playerNumber = 1
@@ -78,7 +82,7 @@ def game(gameID):
                 playerNumber = 2
             else:
                 return render_template("error.html",error="Game is full")
-        return render_template('game.html', gameID=gameID, currentLetters=currentLetters, guessedLetters=[], playerNumber=playerNumber, currentPlayerTurn=currentPlayerTurn)
+        return render_template('game.html', gameID=gameID, currentLetters=currentLetters, guessedLetters=[], playerNumber=playerNumber, currentPlayerTurn=currentPlayerTurn, player1Points=p1Points, player2Points=p2Points)
     else:
         return render_template("error.html",error="Game not found")
 
@@ -90,12 +94,42 @@ def submitguess(gameID, playerNumber, guess):
     if game:
         guess = guess.upper()
         game["guessedLetters"].append(guess)
+        if guess in game["answer"]:
+            if playerNumber == 1:
+                game["p1Points"] += 1
+            elif playerNumber == 2:
+                game["p2Points"] += 1
+        else:
+            if playerNumber == 1:
+                game["p2Points"] -= 1
+            elif playerNumber == 2:
+                game["p1Points"] -= 1
         if game["currentPlayerTurn"] == 0:
             game["currentPlayerTurn"] = 1
-        else:
+        elif game["currentPlayerTurn"] == 1:
             game["currentPlayerTurn"] = 0
         
     return "200 OK"
+
+@app.route('/submitsolve/<int:gameID>/<int:playerNumber>/<string:solve>')
+def submitsolve(gameID, playerNumber, solve):
+    global GAMES_LIST
+    
+    game = next((game for game in GAMES_LIST if game["gameID"] == gameID), None)
+    if game:
+        solve = solve.upper()
+        if solve == game["answer"]:
+            if playerNumber == 1:
+                game["p1Points"] += 3
+            elif playerNumber == 2:
+                game["p2Points"] += 3
+            game["guessedLetters"] = list(game["answer"])
+            game["currentPlayerTurn"] = 3
+            return "200 OK"
+        else:
+            return "INCORRECT"
+    else:
+        return "404 Not Found",404
 
 @app.route('/getcurrentplayersturn/<int:gameID>')
 def getcurrentplayersturn(gameID):
