@@ -94,21 +94,22 @@ def submitguess(gameID, playerNumber, guess):
     if game:
         guess = guess.upper()
         game["guessedLetters"].append(guess)
+        if all(letter in game["guessedLetters"] or letter == " " for letter in game["answer"]):
+            game["currentPlayerTurn"] = 3
         if guess in game["answer"]:
-            if playerNumber == 0:
+            if playerNumber-1 == 0:
                 game["p1Points"] += 1
-            elif playerNumber == 1:
+            elif playerNumber-1 == 1:
                 game["p2Points"] += 1
         else:
-            if playerNumber == 1:
-                game["p2Points"] -= 1
-            elif playerNumber == 2:
+            if playerNumber-1 == 0:
                 game["p1Points"] -= 1
+            elif playerNumber-1 == 1:
+                game["p2Points"] -= 1
         if game["currentPlayerTurn"] == 0:
             game["currentPlayerTurn"] = 1
         elif game["currentPlayerTurn"] == 1:
             game["currentPlayerTurn"] = 0
-        
     return "200 OK"
 
 @app.route('/submitsolve/<int:gameID>/<int:playerNumber>/<string:solve>')
@@ -119,14 +120,18 @@ def submitsolve(gameID, playerNumber, solve):
     if game:
         solve = solve.upper()
         if solve == game["answer"]:
-            if playerNumber == 0:
+            if playerNumber-1 == 0:
                 game["p1Points"] += 3
-            elif playerNumber == 1:
+            elif playerNumber-1 == 1:
                 game["p2Points"] += 3
             game["guessedLetters"] = list(game["answer"])
             game["currentPlayerTurn"] = 3
             return "200 OK"
         else:
+            if playerNumber-1 == 0:
+                game["p1Points"] -= 2
+            elif playerNumber-1 == 1:
+                game["p2Points"] -= 2
             return "INCORRECT"
     else:
         return "404 Not Found",404

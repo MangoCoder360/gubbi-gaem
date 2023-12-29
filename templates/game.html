@@ -6,6 +6,9 @@
         <title>Gubbi Game</title>
     </head>
     <body>
+        {% if playerNumber == 1 or playerNumber == 2 %}
+        <h2>You are player {{ playerNumber }}</h2>
+        {% endif %}
         <h1>Gubbi Gaem</h1><br>
         {% if playerNumber == 1 or playerNumber == 2 %}
         <div class="points-container">
@@ -20,17 +23,17 @@
         <h2>Enter your guess:</h2>
         <input onkeydown="if(event.keyCode===13 && this.value.trim() !== '') submitGuess()" type="text" id="guess" placeholder="Letter" maxlength="1"><br><br>
         <button id="submitBtn" onclick="submitGuess()">Guess</button>
-        <h2>Or solve:</h2>
+        <h2>Know the answer?</h2>
         <input type="text" id="solve" placeholder="Solve"><br><br>
-        <button id="submitBtn" onclick="">Solve</button>
+        <button id="solveBtn" onclick="submitSolve()">Solve</button>
         {% endif %}
         {% if playerNumber == 2 and currentPlayerTurn == 1 %}
         <h2>Enter your guess:</h2>
         <input onkeydown="if(event.keyCode===13 && this.value.trim() !== '') submitGuess()" type="text" id="guess" placeholder="Letter" maxlength="1"><br><br>
         <button id="submitBtn" onclick="submitGuess()">Guess</button>
-        <h2>Or solve:</h2>
+        <h2>Know the answer?</h2>
         <input type="text" id="solve" placeholder="Solve"><br><br>
-        <button id="submitBtn" onclick="">Solve</button>
+        <button id="solveBtn" onclick="submitSolve()">Solve</button>
         {% endif %}
         {% endif %}
         {% if playerNumber == 0 %}
@@ -83,7 +86,15 @@
             setTimeout(() => {
                 location.reload();
             }, 300);
-        }        
+        }
+        function submitSolve(){
+            document.getElementById("solveBtn").innerHTML = "Submitting...";
+            var guess = document.getElementById("solve").value;
+            fetch('/submitsolve/{{ gameID }}/{{ playerNumber }}/'+guess);
+            setTimeout(() => {
+                location.reload();
+            }, 300);
+        }       
 
         function addLetter(letter){
             document.getElementById("box-container").innerHTML += '<div class="letter-box"><strong>'+letter+'</strong></div>';
