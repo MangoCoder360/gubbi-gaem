@@ -10,9 +10,16 @@
         {% if playerNumber == 1 or playerNumber == 2 %}
         <div id="box-container">
         </div>
-        <h2>Enter your letter guess:</h2>
-        <input type="text" id="guess" placeholder="Letter" maxlength="1"><br><br>
+        {% if playerNumber == 1 and currentPlayerTurn == 0 %}
+        <h2>Enter your guess:</h2>
+        <input onkeydown="if(event.keyCode===13 && this.value.trim() !== '') submitGuess()" type="text" id="guess" placeholder="Letter" maxlength="1"><br><br>
         <button id="submitBtn" onclick="submitGuess()">Guess</button>
+        {% endif %}
+        {% if playerNumber == 2 and currentPlayerTurn == 1 %}
+        <h2>Enter your guess:</h2>
+        <input onkeydown="if(event.keyCode===13 && this.value.trim() !== '') submitGuess()" type="text" id="guess" placeholder="Letter" maxlength="1"><br><br>
+        <button id="submitBtn" onclick="submitGuess()">Guess</button>
+        {% endif %}
         {% endif %}
         {% if playerNumber == 0 %}
         <div id="admin-panel">
@@ -20,14 +27,42 @@
         {% endif %}
     </body>
     <script>
+        function checkIfPlayersTurn(){
+            if("{{ playerNumber }}" == "1" && "{{ currentPlayerTurn}}" == "1"){
+                    fetch('/getcurrentplayersturn/{{ gameID }}').then(function(response){
+                        return response.text();
+                    }).then(function(data){
+                        if(data == "0" && "{{ playerNumber }}" == "1"){
+                            location.reload();
+                        }
+                        if(data == "1" && "{{ playerNumber }}" == "2"){
+                            location.reload();
+                        }
+                    });
+            }
+            if("{{ playerNumber }}" == "2" && "{{ currentPlayerTurn}}" == "0"){
+                    fetch('/getcurrentplayersturn/{{ gameID }}').then(function(response){
+                        return response.text();
+                    }).then(function(data){
+                        if(data == "0" && "{{ playerNumber }}" == "1"){
+                            location.reload();
+                        }
+                        if(data == "1" && "{{ playerNumber }}" == "2"){
+                            location.reload();
+                        }
+                    });
+                }
+        }
+        setInterval(checkIfPlayersTurn, 1500);
+
         function submitGuess(){
             document.getElementById("submitBtn").innerHTML = "Submitting...";
             var guess = document.getElementById("guess").value;
             fetch('/submitguess/{{ gameID }}/{{ playerNumber }}/'+guess);
             setTimeout(() => {
                 location.reload();
-            }, 500);
-        }
+            }, 300);
+        }        
 
         function addLetter(letter){
             document.getElementById("box-container").innerHTML += '<div class="letter-box"><strong>'+letter+'</strong></div>';

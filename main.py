@@ -1,4 +1,4 @@
-from flask import Flask,render_template,redirect
+from flask import Flask,render_template,redirect,request
 import random
 
 app = Flask(__name__)
@@ -63,15 +63,22 @@ def game(gameID):
     if game:
         currentLetters = renderCurrentLetters(game["answer"], game["guessedLetters"])
         playersJoined = game["playersJoined"]
-        if playersJoined == 0:
-            playerNumber = 0
-        elif playersJoined == 1:
-            playerNumber = 1
-        elif playersJoined == 2:
-            playerNumber = 2
+        currentPlayerTurn = game["currentPlayerTurn"]
+        if request.args.get('playerNumber'):
+            if int(request.args.get('playerNumber')) == 0:
+                playerNumber = 1
+            if int(request.args.get('playerNumber')) == 1:
+                playerNumber = 2
         else:
-            return render_template("error.html",error="Game is full")
-        return render_template('game.html', gameID=gameID, currentLetters=currentLetters, guessedLetters=[], playerNumber=playerNumber, currentPlayerTurn=0)
+            if playersJoined == 0:
+                playerNumber = 0
+            elif playersJoined == 1:
+                playerNumber = 1
+            elif playersJoined == 2:
+                playerNumber = 2
+            else:
+                return render_template("error.html",error="Game is full")
+        return render_template('game.html', gameID=gameID, currentLetters=currentLetters, guessedLetters=[], playerNumber=playerNumber, currentPlayerTurn=currentPlayerTurn)
     else:
         return render_template("error.html",error="Game not found")
 
@@ -83,9 +90,22 @@ def submitguess(gameID, playerNumber, guess):
     if game:
         guess = guess.upper()
         game["guessedLetters"].append(guess)
-        game["currentPlayerTurn"] = 1 if game["currentPlayerTurn"] == 0 else 0
+        if game["currentPlayerTurn"] == 0:
+            game["currentPlayerTurn"] = 1
+        else:
+            game["currentPlayerTurn"] = 0
         
     return "200 OK"
+
+@app.route('/getcurrentplayersturn/<int:gameID>')
+def getcurrentplayersturn(gameID):
+    global GAMES_LIST
+    
+    game = next((game for game in GAMES_LIST if game["gameID"] == gameID), None)
+    if game:
+        return str(game["currentPlayerTurn"])
+    else:
+        return "404 Not Found",404
 
 if __name__ == '__main__':
     gameID = createGame("The quick brown fox jumps over the lazy dog")
