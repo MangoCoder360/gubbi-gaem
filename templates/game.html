@@ -41,14 +41,18 @@
 
         @keyframes slide-in {
             0% {
-                transform: translateY(20%);
+                transform: translateY(0px);
                 opacity: 0;
                 overflow: hidden;
+                scale: 0.9;
+                transform-origin: 50% 150%;
             }
             100% {
                 transform: translateY(0);
                 opacity: 1;
                 overflow: hidden;
+                scale: 1;
+                transform-origin: 50% 50%;
             }
         }
 
