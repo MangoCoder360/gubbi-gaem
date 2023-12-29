@@ -95,9 +95,9 @@ def submitguess(gameID, playerNumber, guess):
         guess = guess.upper()
         game["guessedLetters"].append(guess)
         if guess in game["answer"]:
-            if playerNumber == 1:
+            if playerNumber == 0:
                 game["p1Points"] += 1
-            elif playerNumber == 2:
+            elif playerNumber == 1:
                 game["p2Points"] += 1
         else:
             if playerNumber == 1:
@@ -119,9 +119,9 @@ def submitsolve(gameID, playerNumber, solve):
     if game:
         solve = solve.upper()
         if solve == game["answer"]:
-            if playerNumber == 1:
+            if playerNumber == 0:
                 game["p1Points"] += 3
-            elif playerNumber == 2:
+            elif playerNumber == 1:
                 game["p2Points"] += 3
             game["guessedLetters"] = list(game["answer"])
             game["currentPlayerTurn"] = 3
