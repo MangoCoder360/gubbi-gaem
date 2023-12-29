@@ -12,7 +12,7 @@
         </div>
         <h2>Enter your letter guess:</h2>
         <input type="text" id="guess" placeholder="Letter" maxlength="1"><br><br>
-        <button>Guess</button>
+        <button id="submitBtn" onclick="submitGuess()">Guess</button>
         {% endif %}
         {% if playerNumber == 0 %}
         <div id="admin-panel">
@@ -20,8 +20,17 @@
         {% endif %}
     </body>
     <script>
-        function addLetter(){
-            document.getElementById("box-container").innerHTML += '<div class="letter-box"></div>';
+        function submitGuess(){
+            document.getElementById("submitBtn").innerHTML = "Submitting...";
+            var guess = document.getElementById("guess").value;
+            fetch('/submitguess/{{ gameID }}/{{ playerNumber }}/'+guess);
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        }
+
+        function addLetter(letter){
+            document.getElementById("box-container").innerHTML += '<div class="letter-box"><strong>'+letter+'</strong></div>';
         }
 
         function addSpace(){
@@ -33,15 +42,20 @@
             var lettersList = Array.from(currentLetters); // Create a list with each character of currentLetters
             for (i = 0; i < lettersList.length; i++){
                 if(lettersList[i] == " "){
-                    setTimeout(addSpace, 0 * i);
+                    addSpace();
                 }
                 else{
-                    setTimeout(addLetter, 0 * i);
+                    if(lettersList[i] == "?"){
+                        addLetter("");
+                    }
+                    else{
+                        addLetter(lettersList[i]);
+                    }
                 }
             }
         }
         
-        setTimeout(renderLetters, 1000);
+        setTimeout(renderLetters, 500);
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
@@ -131,6 +145,9 @@
             justify-content: center;
             align-items: center;
             max-width: 100%;
+            flex-wrap: wrap;
+            font-family: sans-serif;
+            font-size: 100%;
         }
         .letter-box {
             min-width: 5vw;

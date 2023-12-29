@@ -7,6 +7,7 @@ GAMES_LIST = []
 
 def createGame(answer):
     global GAMES_LIST
+    answer = answer.upper()
     gameID = random.randint(1111,9999)
     while gameID in [game["gameID"] for game in GAMES_LIST]:
         gameID = random.randint(1111, 9999)
@@ -79,12 +80,17 @@ def submitguess(gameID, playerNumber, guess):
     global GAMES_LIST
     
     game = next((game for game in GAMES_LIST if game["gameID"] == gameID), None)
-    if game and game["currentPlayerTurn"] == playerNumber:
+    if game:
         guess = guess.upper()
         game["guessedLetters"].append(guess)
         game["currentPlayerTurn"] = 1 if game["currentPlayerTurn"] == 0 else 0
         
-    return redirect("/game/"+str(gameID))
+    return "200 OK"
 
 if __name__ == '__main__':
+    gameID = createGame("The quick brown fox jumps over the lazy dog")
+    game = next((game for game in GAMES_LIST if game["gameID"] == gameID), None)
+    if game:
+        game["gameID"] = 1234
+    
     app.run(host="0.0.0.0", port=8000)
