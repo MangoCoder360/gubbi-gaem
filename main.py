@@ -1,5 +1,11 @@
 from flask import Flask,render_template,redirect,request
-import random
+import random,os
+from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=api_key)
 
 app = Flask(__name__)
 
@@ -15,7 +21,7 @@ def createGame(answer):
         "gameID":gameID,
         "playersJoined":0,
         "answer":answer,
-        "guessedLetters":[],
+        "guessedLetters":[".",",","!","?","-","_","(",")","[","]","{","}","<",">","/","\\","|","=","+","*","&","^","%","$","#","@","~","`","1","2","3","4","5","6","7","8","9","0"],
         "currentPlayerTurn":0,
         "p1Points":0,
         "p2Points":0
@@ -56,6 +62,17 @@ def joingame(gameID):
 @app.route('/newgame/<string:answer>')
 def creategame(answer):
     return redirect("/game/"+str(createGame(answer)))
+
+@app.route('/newaigame')
+def newaigame():
+    global GAMES_LIST
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "user", "content": "Give me a short sentence but don't choose words that are difficult to spell."}
+        ]
+    )
+    return redirect("/joingame/"+str(createGame(completion.choices[0].message.content)))
 
 @app.route('/game/<int:gameID>')
 def game(gameID):
@@ -110,6 +127,11 @@ def submitguess(gameID, playerNumber, guess):
             game["currentPlayerTurn"] = 1
         elif game["currentPlayerTurn"] == 1:
             game["currentPlayerTurn"] = 0
+
+        if game["p1Points"] < 0:
+            game["p1Points"] = 0
+        if game["p2Points"] < 0:
+            game["p2Points"] = 0
     return "200 OK"
 
 @app.route('/submitsolve/<int:gameID>/<int:playerNumber>/<string:solve>')
@@ -132,6 +154,11 @@ def submitsolve(gameID, playerNumber, solve):
                 game["p1Points"] -= 2
             elif playerNumber-1 == 1:
                 game["p2Points"] -= 2
+            
+            if game["p1Points"] < 0:
+                game["p1Points"] = 0
+            if game["p2Points"] < 0:
+                game["p2Points"] = 0
             return "INCORRECT"
     else:
         return "404 Not Found",404
@@ -147,9 +174,4 @@ def getcurrentplayersturn(gameID):
         return "404 Not Found",404
 
 if __name__ == '__main__':
-    gameID = createGame("The quick brown fox jumps over the lazy dog")
-    game = next((game for game in GAMES_LIST if game["gameID"] == gameID), None)
-    if game:
-        game["gameID"] = 1234
-    
     app.run(host="0.0.0.0", port=8000)

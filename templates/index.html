@@ -16,7 +16,8 @@
     <h2>Start a new game:</h2>
     <div>
         <input type="text" id="answer" placeholder="Correct Answer"><br><br>
-        <button onclick="newgame()">New Game</button>
+        <button onclick="newgame()">New Game</button><br><br>
+        <button id="aigamebtn" onclick="aigame()">Let AI choose the answer</button>
     </div>
 </body>
 </html>
@@ -47,7 +48,7 @@
         animation: slide-in 1s ease-in-out;
     }
     h1{
-        margin:50px;
+        margin:10px;
         font-family: sans-serif;
         color:rgb(255, 150, 51);
         text-align: center;
@@ -92,6 +93,10 @@ function newgame(){
     else{
         alert("Invalid Answer!");
     }
+}
+function aigame(){
+    document.getElementById("aigamebtn").innerHTML = "Please wait...";
+    location.href = "/newaigame";
 }
 
     function joingame(){
