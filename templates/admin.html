@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gubbi Gaem</title>
+</head>
+<body>
+    <h1>Gubbi Gaem Admin</h1>
+    <h2>{{ numOfGames }} games in progress right now</h2><br>
+    <h2>All Active Games:</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>GameID</th>
+                <th>PlayersJoined</th>
+                <th>Answer</th>
+                <th>GuessedLetters</th>
+                <th>CurrentPlayerTurn</th>
+                <th>P1 Points</th>
+                <th>P2 Points</th>
+                <th>Admin Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if games_list != "" %}
+                {% for game in games_list %}
+                    <tr>
+                        <td>{{ game["gameID"] }}</td>
+                        <td>{{ game["playersJoined"] }}</td>
+                        <td>{{ game["answer"] }}</td>
+                        <td>{{ game["guessedLetters"] }}</td>
+                        <td>{{ game["currentPlayerTurn"] }}</td>
+                        <td>{{ game["p1Points"] }}</td>
+                        <td>{{ game["p2Points"] }}</td>
+                        <td>
+                            <button onclick="deletegame('{{ game["gameID"] }}')">Delete</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table><br>
+    <div><button onclick="deletegames()">Delete All Games</button></div><br>
+    <div><button onclick="reload()">Reload</button></div>
+</body>
+</html>
+<script>
+    function deletegames(){
+        fetch('/deleteallgames');
+        setTimeout(() => {
+            location.reload();
+        }, 500);
+    }
+
+    function deletegame(gameID){
+        fetch('/deletegame/' + gameID);
+        setTimeout(() => {
+            location.reload();
+        }, 500);
+    }
+    function reload(){
+        location.reload();
+    }
+</script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
+
+    @keyframes slide-in {
+        0% {
+            transform: translateY(0px);
+            opacity: 0;
+            overflow: hidden;
+            scale: 0.9;
+            transform-origin: 50% 150%;
+        }
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+            overflow: hidden;
+            scale: 1;
+            transform-origin: 50% 50%;
+        }
+    }
+
+    html{
+        background: linear-gradient(90deg, rgba(6,116,117,1) 0%, rgba(121,45,253,1) 100%) !important;
+    }
+    body{
+        animation: slide-in 1s ease-in-out;
+    }
+    h1{
+        margin:10px;
+        font-family: sans-serif;
+        color:rgb(255, 150, 51);
+        text-align: center;
+        font-size:10vw;
+        font-family: 'Roboto', sans-serif;
+    }
+    h2{
+        font-family: sans-serif;
+        color:white;
+        text-align: center;
+    }
+    div{
+        text-align: center;
+    }
+    table{
+        border: 1px solid white;
+        border-collapse: collapse;
+        color: white;
+        font-family: sans-serif;
+        text-align: center;
+        margin: 0 auto;
+    }
+    th{
+        border: 1px solid white;
+        border-collapse: collapse;
+        color: white;
+        font-family: sans-serif;
+        text-align: center;
+        margin: 0 auto;
+    }
+    a{
+        color: white;
+        font-family: sans-serif;
+        text-align: center;
+        margin: 0 auto;
+    }
+    button{
+        border-radius: 5px;
+        border: none;
+        padding: 10px;
+        font-size: 20px;
+        background-color: rgb(255, 150, 51);
+        color: white;
+        cursor: pointer;
+    }
+</style>

@@ -6,7 +6,8 @@
     <title>Gubbi Gaem</title>
 </head>
 <body>
-    <h1>Gubbi Gaem</h1><br>
+    <h1>Gubbi Gaem</h1>
+    <h2>{{ numOfGames }} games in progress right now</h2><br>
     <h2>Join a game:</h2>
     <div>
         <input type="number" id="code" placeholder="Game ID" min="1111" max="9999"><br><br>
@@ -15,9 +16,13 @@
     <br><br>
     <h2>Start a new game:</h2>
     <div>
-        <input type="text" id="answer" placeholder="Correct Answer"><br><br>
+        <input maxlength="50" type="text" id="answer" placeholder="Correct Answer"><br><br>
         <button onclick="newgame()">New Game</button><br><br>
         <button id="aigamebtn" onclick="aigame()">Let AI choose the answer</button>
+    </div>
+    <div>
+        <br><br><br><br>
+        <button onclick="admin()">Admin Login</button>
     </div>
 </body>
 </html>
@@ -83,6 +88,12 @@
         color: white;
         cursor: pointer;
     }
+    #code{
+        width: 100px;
+    }
+    #answer{
+        width: 400px;
+    }
 </style>
 <script>
 function newgame(){
@@ -97,6 +108,9 @@ function newgame(){
 function aigame(){
     document.getElementById("aigamebtn").innerHTML = "Please wait...";
     location.href = "/newaigame";
+}
+function admin(){
+    location.href = "/admin";
 }
 
     function joingame(){

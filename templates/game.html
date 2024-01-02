@@ -10,6 +10,9 @@
         <h2>Game ID: {{ gameID }}</h2>
         <h2>You are player {{ playerNumber }}</h2>
         {% endif %}
+        {% if currentPlayerTurn == 3 %}
+        <h1>Game Over<br>Exiting in 5 seconds</h1>
+        {% endif %}
         <h1>Gubbi Gaem</h1><br>
         {% if playerNumber == 1 or playerNumber == 2 %}
         <div class="points-container">
@@ -42,6 +45,16 @@
             <h1>Game ID: {{ gameID }}</h1>
         {% endif %}
     </body>
+    {% if currentPlayerTurn == 3 %}
+        <script>
+            setTimeout(() => {
+                fetch('/deletegame/{{ gameID }}');
+            }, 5000);
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 6000);
+        </script>
+    {% endif %}
     <script>
         try{
             document.getElementById("guess").focus();
@@ -77,6 +90,14 @@
                         }
                     });
                 }
+
+                fetch('/getcurrentplayersturn/{{ gameID }}').then(function(response){
+                    return response.text();
+                }).then(function(data){
+                    if(data == "3" && "{{ currentPlayerTurn }}" != 3){
+                        location.reload();
+                    }
+                });
         }
         setInterval(checkIfPlayersTurn, 1500);
 

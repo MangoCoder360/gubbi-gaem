@@ -10,9 +10,10 @@ client = OpenAI(api_key=api_key)
 app = Flask(__name__)
 
 GAMES_LIST = []
+DEFAULT_LETTERS = [".",",","!","?","-","_","(",")","[","]","{","}","<",">","/","\\","|","=","+","*","&","^","%","$","#","@","~","'","1","2","3","4","5","6","7","8","9","0"]
 
 def createGame(answer):
-    global GAMES_LIST
+    global GAMES_LIST,DEFAULT_LETTERS
     answer = answer.upper()
     gameID = random.randint(1111,9999)
     while gameID in [game["gameID"] for game in GAMES_LIST]:
@@ -21,7 +22,7 @@ def createGame(answer):
         "gameID":gameID,
         "playersJoined":0,
         "answer":answer,
-        "guessedLetters":[".",",","!","?","-","_","(",")","[","]","{","}","<",">","/","\\","|","=","+","*","&","^","%","$","#","@","~","`","1","2","3","4","5","6","7","8","9","0"],
+        "guessedLetters":DEFAULT_LETTERS,
         "currentPlayerTurn":0,
         "p1Points":0,
         "p2Points":0
@@ -33,8 +34,9 @@ def renderCurrentLetters(answer, guessedLetters):
     return "".join([letter if letter in guessedLetters or letter == " " else "?" for letter in answer])
 
 @app.route('/')
-def hello():
-    return render_template('index.html')
+def index():
+    global GAMES_LIST
+    return render_template('index.html',numOfGames=len(GAMES_LIST))
 
 @app.route('/joingame/<int:gameID>')
 def joingame(gameID):
@@ -68,8 +70,9 @@ def newaigame():
     global GAMES_LIST
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
+        max_tokens=32,
         messages=[
-            {"role": "user", "content": "Give me a short sentence but don't choose words that are difficult to spell."}
+            {"role": "user", "content": "Give me a sentence that is at least 5 words"}
         ]
     )
     return redirect("/joingame/"+str(createGame(completion.choices[0].message.content)))
@@ -172,6 +175,41 @@ def getcurrentplayersturn(gameID):
         return str(game["currentPlayerTurn"])
     else:
         return "404 Not Found",404
+    
+@app.route('/deletegame/<int:gameID>')
+def deletegame(gameID):
+    global GAMES_LIST
+    
+    game = next((game for game in GAMES_LIST if game["gameID"] == gameID), None)
+    if game:
+        GAMES_LIST.remove(game)
+        return "200 OK"
+    else:
+        return "404 Not Found",404
+    
+@app.route('/deleteallgames')
+def deleteallgames():
+    global GAMES_LIST
+    
+    GAMES_LIST = []
+    return "200 OK"
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    global GAMES_LIST,DEFAULT_LETTERS
+
+    if request.method == "GET":
+        return render_template('adminauth.html')
+    
+    if request.method == "POST":
+        if request.form["answer"] == "ADMIN_PASSWORD":
+            games_list_without_default_letters = []
+            for game in GAMES_LIST:
+                game["guessedLetters"] = [letter for letter in game["guessedLetters"] if letter not in DEFAULT_LETTERS]
+                games_list_without_default_letters.append(game)
+            return render_template('admin.html', games_list=games_list_without_default_letters, numOfGames=len(GAMES_LIST))
+        else:
+            return render_template('adminauth.html', error="Incorrect password")
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8000)
