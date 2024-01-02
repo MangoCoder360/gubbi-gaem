@@ -22,7 +22,7 @@ def createGame(answer):
         "gameID":gameID,
         "playersJoined":0,
         "answer":answer,
-        "guessedLetters":DEFAULT_LETTERS,
+        "guessedLetters":list(DEFAULT_LETTERS),
         "currentPlayerTurn":0,
         "p1Points":0,
         "p2Points":0
@@ -203,11 +203,12 @@ def admin():
     
     if request.method == "POST":
         if request.form["answer"] == "ADMIN_PASSWORD":
+            gameslist = list(GAMES_LIST)
             games_list_without_default_letters = []
-            for game in GAMES_LIST:
+            for game in gameslist:
                 game["guessedLetters"] = [letter for letter in game["guessedLetters"] if letter not in DEFAULT_LETTERS]
                 games_list_without_default_letters.append(game)
-            return render_template('admin.html', games_list=games_list_without_default_letters, numOfGames=len(GAMES_LIST))
+            return render_template('admin.html', games_list=games_list_without_default_letters, numOfGames=len(gameslist))
         else:
             return render_template('adminauth.html', error="Incorrect password")
 
