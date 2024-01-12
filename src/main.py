@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 GAMES_LIST = []
 DEFAULT_LETTERS = [".",",","!","?","-","_","(",")","[","]","{","}","<",">","/","\\","|","=","+","*","&","^","%","$","#","@","~","'","1","2","3","4","5","6","7","8","9","0"]
+USED_PHRASES = []
 
 def createGame(answer):
     global GAMES_LIST,DEFAULT_LETTERS
@@ -65,14 +66,18 @@ def creategame(answer):
 
 @app.route('/newaigame')
 def newaigame():
-    global GAMES_LIST
-    completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        max_tokens=32,
-        messages=[
-            {"role": "user", "content": "Give me a sentence that is at least 5 words"}
-        ]
-    )
+    global GAMES_LIST,USED_PHRASES
+    while True:
+        completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            max_tokens=32,
+            messages=[
+                {"role": "user", "content": "Give me a sentence that is at least 5 words"}
+            ]
+        )
+        if completion.choices[0].message.content not in USED_PHRASES:
+            USED_PHRASES.append(completion.choices[0].message.content)
+            break
     return redirect("/joingame/"+str(createGame(completion.choices[0].message.content)))
 
 @app.route('/game/<int:gameID>')
