@@ -199,7 +199,7 @@ def deleteallgames():
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    global GAMES_LIST,DEFAULT_LETTERS
+    global GAMES_LIST,DEFAULT_LETTERS,USED_PHRASES
 
     if request.method == "GET":
         return render_template('adminauth.html')
@@ -211,7 +211,7 @@ def admin():
             for game in gameslist:
                 game["guessedLetters"] = [letter for letter in game["guessedLetters"] if letter not in DEFAULT_LETTERS]
                 games_list_without_default_letters.append(game)
-            return render_template('admin.html', games_list=games_list_without_default_letters, numOfGames=len(gameslist))
+            return render_template('admin.html', games_list=games_list_without_default_letters, numOfGames=len(gameslist), used_phrases=USED_PHRASES)
         else:
             return render_template('adminauth.html', error="Incorrect password")
 
